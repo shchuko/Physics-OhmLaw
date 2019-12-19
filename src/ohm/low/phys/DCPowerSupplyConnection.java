@@ -52,7 +52,7 @@ public class DCPowerSupplyConnection {
      * @return true if circuit is short, false if not
      */
     public boolean isShortCircuit() {
-        return getCurrent() == Double.POSITIVE_INFINITY;
+        return externalResistor.getResistance() == 0;
     }
 
     /**

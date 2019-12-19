@@ -29,7 +29,7 @@ public class Potentiometer implements Resistor {
 
     @Override
     public double getResistance() {
-        return 0;
+        return resistance;
     }
 
     @Override
@@ -55,5 +55,12 @@ public class Potentiometer implements Resistor {
 
         resistance = maxResistance * coefficient / 100;
         return resistance;
+    }
+
+    public void setResistance(double resistance) throws WrongPhysicsParameterException {
+        if (resistance < 0 || resistance > maxResistance) {
+            throw new WrongPhysicsParameterException("Resistance is not in range 0.." + maxResistance);
+        }
+        this.resistance = resistance;
     }
 }

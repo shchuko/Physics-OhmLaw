@@ -79,4 +79,19 @@ public class DCPowerSupplyConnection {
         return getCurrent() * getExternalResistorVoltage();
     }
 
+    /**
+     * Get power supply connected to circuit
+     * @return Connected power supply
+     */
+    public DCPowerSupply getPowerSupply() {
+        return powerSupply;
+    }
+
+    /**
+     * Get external resistor connected to circuit
+     * @return Connected external resistor
+     */
+    public Resistor getExternalResistor() {
+        return externalResistor;
+    }
 }

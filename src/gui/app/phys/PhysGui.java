@@ -49,7 +49,7 @@ public class PhysGui extends JFrame {
     public PhysGui() {
         super("Ohm's Law simulator for DC circuit");
 
-        Image img = Toolkit.getDefaultToolkit().getImage(getClass().getResource("img/ico.png"));
+        Image img = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("img/ico.png"));
         setIconImage(img);
         setTitle("Ohm's Law simulator for DC circuit");
 
@@ -77,7 +77,7 @@ public class PhysGui extends JFrame {
      * Loads image with circuit from img/circuit.png
      */
     private void loadImage() {
-        Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("img/circuit.png"));
+        Image image = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("img/circuit.png"));
 
         int width = 350;
         int height = 200;

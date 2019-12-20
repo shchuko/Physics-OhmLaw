@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Physics-OhmLow.iml" filepath="$PROJECT_DIR$/Physics-OhmLow.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Physics-OhmLaw.iml" filepath="$PROJECT_DIR$/Physics-OhmLaw.iml" />
     </modules>
   </component>
 </project>

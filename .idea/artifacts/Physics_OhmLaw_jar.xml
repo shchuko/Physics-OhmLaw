@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="Physics-OhmLaw:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Physics_OhmLaw_jar</output-path>
+    <root id="archive" name="Physics-OhmLaw.jar">
+      <element id="module-output" name="Physics-OhmLaw" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/xchart-3.5.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/VectorGraphics2D-0.13.jar" path-in-jar="/" />
+      <element id="dir-copy" path="$PROJECT_DIR$/../PhysResistTempDependenceSimulator/resources" />
+    </root>
+  </artifact>
+</component>

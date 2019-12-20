@@ -6,14 +6,10 @@ import ohm.low.phys.base.DCPowerSupply;
 import ohm.low.phys.base.FixedResistor;
 import ohm.low.phys.base.Potentiometer;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class PhysGui extends JFrame {
     private enum Status {STOPPED, ACTIVE}
@@ -53,7 +49,7 @@ public class PhysGui extends JFrame {
     public PhysGui() {
         super("Ohm's Law simulator for DC circuit");
 
-        Image img = new ImageIcon("img/ico.png").getImage();
+        Image img = Toolkit.getDefaultToolkit().getImage(getClass().getResource("img/ico.png"));
         setIconImage(img);
         setTitle("Ohm's Law simulator for DC circuit");
 
@@ -78,19 +74,11 @@ public class PhysGui extends JFrame {
     }
 
     /**
-     * Loads image with circuit from /imp/circuit.png
+     * Loads image with circuit from img/circuit.png
      */
     private void loadImage() {
-        BufferedImage imageBuf;
-        try {
-            imageBuf = ImageIO.read(new File("img/circuit.png"));
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Can't open circuit image", "File Reading Error", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+        Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("img/circuit.png"));
 
-        Image image = new ImageIcon(imageBuf).getImage();
         int width = 350;
         int height = 200;
         image = image.getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH);

@@ -263,7 +263,7 @@
                 </constraints>
                 <properties>
                   <font name="Noto Sans" size="16" style="0"/>
-                  <text value="CAPTURE"/>
+                  <text value="GRAPHS"/>
                 </properties>
               </component>
             </children>

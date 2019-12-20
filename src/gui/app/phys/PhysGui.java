@@ -8,8 +8,6 @@ import ohm.low.phys.base.Potentiometer;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class PhysGui extends JFrame {
-    private enum Status {STOPPED, ACTIVE};
+    private enum Status {STOPPED, ACTIVE}
     private Status status = Status.STOPPED;
 
     private static final int SLIDER_MAX = 10_000_000;
@@ -47,18 +45,27 @@ public class PhysGui extends JFrame {
     private DCPowerSupply powerSupply;
     private DCPowerSupplyConnection circuit;
 
+    private JFrame graphsFrame = new JFrame();
+
     /**
-     * Creates GUI of interactive Ohm's law simulator control panel
+     * Creates GUI for interactive Ohm's law simulator control panel
      */
     public PhysGui() {
         super("Ohm's Law simulator for DC circuit");
+
         Image img = new ImageIcon("img/ico.png").getImage();
         setIconImage(img);
         setTitle("Ohm's Law simulator for DC circuit");
 
+        graphsFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        graphsFrame.setVisible(false);
+        graphsFrame.setIconImage(img);
+        graphsFrame.setTitle("Ohm's Law simulator graphs");
+
         loadImage();
         fillFieldsZeroes();
         updateModeButton();
+        captureButton.setEnabled(false);
         initActionHandling();
         setLabelStopped();
 
@@ -66,7 +73,7 @@ public class PhysGui extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setContentPane(mainPanel);
         pack();
-        centring();
+        centring(this);
         setVisible(true);
     }
 
@@ -93,10 +100,10 @@ public class PhysGui extends JFrame {
     /**
      * Places frame to the screen center
      */
-    private void centring() {
+    private static void centring(JFrame frame) {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation(dim.width / 2 - getWidth() / 2,
-                dim.height / 2 - getHeight() / 2);
+        frame.setLocation(dim.width / 2 - frame.getWidth() / 2,
+                dim.height / 2 - frame.getHeight() / 2);
     }
 
     /**
@@ -142,7 +149,7 @@ public class PhysGui extends JFrame {
                     stopSimulation();
                     break;
                 case "doCapture":
-                    doCapture();
+                    showGraphs();
                     break;
             }
         };
@@ -172,8 +179,9 @@ public class PhysGui extends JFrame {
     private void stopSimulation() {
         status = Status.STOPPED;
         updateModeButton();
+        captureButton.setEnabled(false);
 
-        setLabelStopped();;
+        setLabelStopped();
 
         emfField.setEditable(true);
         extResistanceField.setEditable(true);
@@ -188,40 +196,37 @@ public class PhysGui extends JFrame {
     private void startSimulation() {
         status = Status.ACTIVE;
         updateModeButton();
-
-        String oldEmf = emfField.getText();
-        String oldInternalR = intResistanceField.getText();
-        String oldExternalRmax = extResistanceField.getText();
+        captureButton.setEnabled(true);
 
         double emf;
         double internalR;
         double externalRmax;
 
         try {
-            emf = Double.parseDouble(oldEmf.trim().replace(',', '.'));
+            emf = Double.parseDouble(emfField.getText().trim().replace(',', '.'));
         } catch (NumberFormatException e) {
             showWrongArgumentMessage("Wrong EMF value");
-            emfField.setText(oldEmf);
+            emfField.setText("0.0");
             stopSimulation();
             return;
         }
 
         try {
-            internalR = Double.parseDouble(oldInternalR.trim().replace(',', '.'));
+            internalR = Double.parseDouble(intResistanceField.getText().trim().replace(',', '.'));
             powerSupply = new DCPowerSupply(emf, new FixedResistor(internalR));
         } catch (Exception e) {
             showWrongArgumentMessage("Wrong internal resistance value");
-            intResistanceField.setText(oldInternalR);
+            intResistanceField.setText("0.0");
             stopSimulation();
             return;
         }
 
         try {
-            externalRmax = Double.parseDouble(oldExternalRmax.trim().replace(',', '.'));
+            externalRmax = Double.parseDouble(extResistanceField.getText().trim().replace(',', '.'));
             externalResistor = new Potentiometer(externalRmax);
         } catch (Exception e) {
             showWrongArgumentMessage("Wrong external resistance value");
-            extResistanceField.setText(oldExternalRmax);
+            extResistanceField.setText("0.0");
             stopSimulation();
             return;
         }
@@ -250,8 +255,15 @@ public class PhysGui extends JFrame {
     /**
      * Capture status of the simulation
      */
-    private void doCapture() {
-        // TODO
+    private void showGraphs() {
+        if (circuit.getCurrent() == Double.POSITIVE_INFINITY) {
+            showWrongArgumentMessage("Can't create graphs for this parameters");
+            return;
+        }
+        graphsFrame.setContentPane(new GraphsCreator(circuit).getContainer());
+        graphsFrame.pack();
+        centring(graphsFrame);
+        graphsFrame.setVisible(true);
     }
 
     /**
@@ -275,7 +287,6 @@ public class PhysGui extends JFrame {
      * Handle resistance field change
      */
     private void handleResistanceFieldChange() {
-        System.out.println("Handel");
         if (externalResistor == null)
             return;
 
@@ -283,7 +294,6 @@ public class PhysGui extends JFrame {
         try {
             currentResistance = Double.parseDouble(currentExtResistance.getText().trim().replace(',', '.'));
             externalResistor.setResistance(currentResistance);
-            System.out.println(externalResistor.getResistance());
         } catch (Exception e) {
             showWrongArgumentMessage("Wrong external resistance value");
             return;
@@ -296,6 +306,7 @@ public class PhysGui extends JFrame {
      * Update fields values after change
      */
     private void updateAll() {
+
         if (circuit.isShortCircuit()) {
             setLabelActiveShortCircuit();
         } else {
@@ -310,16 +321,25 @@ public class PhysGui extends JFrame {
         pExtField.setText(Double.toString(circuit.getExternalPower()));
     }
 
+    /**
+     * Set status label to stop state
+     */
     private void setLabelStopped() {
         statusLabel.setText(LABEL_STOPPED);
         statusLabel.setForeground(Color.black);
     }
 
+    /**
+     * Set status label to active state
+     */
     private void setLabelActiveNormal() {
         statusLabel.setText(LABEL_ACTIVE_NORMAL);
         statusLabel.setForeground(Color.blue);
     }
 
+    /**
+     * Set status label to short circuit state
+     */
     private void setLabelActiveShortCircuit() {
         statusLabel.setText(LABEL_ACTIVE_SHORT_CIRCUIT);
         statusLabel.setForeground(Color.red);
